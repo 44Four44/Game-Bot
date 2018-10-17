@@ -1,18 +1,5 @@
-import pygame
+from Wall import *
 
-pygame.init()
-
-# size of the square tiles that make up the map
-tile_size = 40
-screen_width = tile_size * 20
-screen_height = tile_size * 15
-
-# true if the game is running
-run = True
-
-# Colors
-red = (255, 0, 0)
-black = (0, 0, 0)
 
 class Player(pygame.sprite.Sprite):
     """
@@ -43,7 +30,7 @@ class Player(pygame.sprite.Sprite):
 
     """
 
-    def __init__(self, x, y, speed, size, color):
+    def __init__(self, game, x, y, speed, size, fill, border):
         """
         Constructor to build a player
 
@@ -66,37 +53,28 @@ class Player(pygame.sprite.Sprite):
 
         """
 
-        # Call the parent class (Sprite) constructor
+        self.groups = game.players
+        pygame.sprite.Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pygame.Surface((size, size))
+        self.image.fill(border)
+        pygame.draw.rect(self.image, fill, [4, 4, 22, 22])
+        self.rect = self.image.get_rect()
+
         self.x = x
         self.y = y
         self.speed = speed
-        self.size = size
-        self.color = color
 
-
-    def display(self):
-        """
-        Draw the player
-
-        Parameters
-        ----------
-        None
-
-        Return
-        ------
-        None
-
-        """
-
-        pygame.draw.rect(screen, (self.color), (self.x, self.y, self.size, self.size))
-
-    def move(self, keys):
+    def move(self, dx=0, dy=0):
         """
         Checks for player movement, then updates position
 
         Parameters
         ----------
-        keys : pygame keys
+        dx : int
+            Change in x position
+        dy : int
+            Change in y position
 
         Return
         ------
@@ -105,11 +83,7 @@ class Player(pygame.sprite.Sprite):
         """
 
         # checks for which keys are pressed and moves the player
-        if keys[pygame.K_UP] or keys[pygame.K_w]:
-            self.y -= self.speed
-        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-            self.x -= self.speed
-        if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-            self.y += self.speed
-        if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-            self.x += self.speed
+        self.x += dx
+        self.y += dy
+        self.rect.x = self.x
+        self.rect.y = self.y
