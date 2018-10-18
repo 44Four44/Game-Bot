@@ -54,9 +54,8 @@ class Game:
                     if symbol == 'g' or symbol == 'h' or symbol == 'j':
                         SafeZone(self, (x - 1)/2, (y - 1)/2, tile_size, palegreen, symbol)
 
-        self.player = Player(self, 200, 100, 2.5, 30, red, maroon)
-        self.player.x = 100
-        self.player.y = 300
+        self.player = Player(self, 125, 245, 2.5, 30, red, maroon)
+
 
 
     def run(self):

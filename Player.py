@@ -66,6 +66,8 @@ class Player(pygame.sprite.Sprite):
         self.image.fill(border)
         pygame.draw.rect(self.image, fill, [4, 4, 22, 22])
         self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
         self.x = x
         self.y = y
         self.speed = speed
