@@ -27,22 +27,37 @@ class Game:
         pygame.key.set_repeat(1, 1)
 
     def new(self):
+        self.all_sprites = pygame.sprite.Group()
         self.players = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
         self.zones = pygame.sprite.Group()
-        self.player = Player(self, 100, 100, 5, 30, red, maroon)
+        self.borders = pygame.sprite.Group()
+
 
         # Map maker
         with open(file_path, 'r') as file:
             data = file.readlines()
-        for y in range (0, 15):
-            for x in range (0, 20):
+        for y in range (0, 30):
+            for x in range (0, 40):
+                # Map symbol in the map file
                 symbol = data[y][x]
-                if symbol == '1':
-                    Wall(self, x, y, tile_size, lightsteelblue)
 
-                if symbol == 'g' or symbol == 'h' or symbol == 'j':
-                    SafeZone(self, x, y, tile_size, palegreen, symbol)
+                if y % 2 == 0 or x % 2 == 0:
+                    # Symbols on the sides of tiles (borders, coins)
+                    if symbol == '*':
+                        Border(self, x / 2 * tile_size, y / 2 * tile_size, tile_size, 4, black, y % 2)
+                else:
+                    # Symbols on the centres of tiles
+                    if symbol == '1':
+                        Wall(self, (x - 1)/2, (y - 1)/2, tile_size, lightsteelblue)
+
+                    if symbol == 'g' or symbol == 'h' or symbol == 'j':
+                        SafeZone(self, (x - 1)/2, (y - 1)/2, tile_size, palegreen, symbol)
+
+        self.player = Player(self, 200, 100, 2.5, 30, red, maroon)
+        self.player.x = 100
+        self.player.y = 300
+
 
     def run(self):
         # game loop - set self.playing = False to end the game
@@ -59,7 +74,7 @@ class Game:
 
     def update(self):
         # update sprites
-        self.players.update()
+        self.all_sprites.update()
 
     def draw_map(self):
         for y in range(0, 15):
@@ -74,8 +89,9 @@ class Game:
     def draw(self):
         self.screen.fill(black)
         self.draw_map()
-        self.players.draw(self.screen)
-
+        self.all_sprites.draw(self.screen)
+        for border in self.borders:
+            border.draw()
         pygame.display.update()
 
     def events(self):
@@ -84,13 +100,15 @@ class Game:
             if event.type == pygame.QUIT:
                 self.quit()
             if event.type == pygame.KEYDOWN:
+                keys = pygame.key.get_pressed()
+                print(keys.index(True))
                 if event.key == pygame.K_ESCAPE:
                     self.quit()
-                if event.key == pygame.K_UP or event.key == pygame.K_w:
+                if  keys[273] or keys[119]:
                     self.player.move(dy=-self.player.speed)
-                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                if keys[276] or keys[97]:
                     self.player.move(dx=-self.player.speed)
-                if event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                if keys[274] or keys[115]:
                     self.player.move(dy=self.player.speed)
-                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                if keys[275] or keys[100]:
                     self.player.move(dx=self.player.speed)

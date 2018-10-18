@@ -16,6 +16,7 @@ class Wall(pygame.sprite.Sprite):
         The color of the wall in RGB
 
 
+
     Methods
     -------
     die(None) -> None
@@ -27,7 +28,7 @@ class Wall(pygame.sprite.Sprite):
 
     """
     def __init__(self, game, x, y, size, color):
-        self.groups = game.players, game.walls
+        self.groups = game.all_sprites, game.walls
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pygame.Surface((size, size))
@@ -35,5 +36,7 @@ class Wall(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
+        self.size = size
+        self.color = color
         self.rect.x = x * tile_size
         self.rect.y = y * tile_size
