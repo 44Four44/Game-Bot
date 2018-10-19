@@ -73,7 +73,7 @@ class Game:
         while self.run:
             # dt is the time between each frame in seconds
             self.dt = self.clock.tick(FPS) / 1000
-            print(self.dt)
+            # print(self.dt)
 
             self.events()
             self.update()

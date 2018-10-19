@@ -76,21 +76,23 @@ class Player(pygame.sprite.Sprite):
         self.border = border
 
     def key_pressed(self):
+        self.vx = 0
+        self.vy = 0
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_w] or keys[pygame.K_UP]:
-            self.vy = self.speed
-        if keys[pygame.K_a] or keys[pygame.K_LEFT]:
-            self.vx = -self.speed
         if keys[pygame.K_s] or keys[pygame.K_DOWN]:
+            self.vy = self.speed
+        if keys[pygame.K_w] or keys[pygame.K_UP]:
             self.vy = -self.speed
         if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
             self.vx = self.speed
+        if keys[pygame.K_a] or keys[pygame.K_LEFT]:
+            self.vx = -self.speed
 
     def update(self):
         self.key_pressed()
-        self.x += self.vx
-        self.y += self.vy
-        self.wall_collision('y')
+        self.rect.x += self.vx
+        self.wall_collision('x')
+        self.rect.y += self.vy
         self.wall_collision('y')
 
     def wall_collision(self, direction):
