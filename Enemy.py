@@ -1,20 +1,17 @@
-from Border import *
-class SafeZone(pygame.sprite.Sprite):
+from Wall import *
+
+class Enemy(pygame.sprite.Sprite):
     """
-    Safe / green zones for checkpoints
+    Enemies
 
     Attributes
     ----------
-    x : float
-        The x coordinate of the zone
-    y : float
-        The y coordinate of the zone
+    criticals : float list
+
     size : int
-        The side length of the square zone
+        The side length of the square wall
     color : int list
-        The color of the zone in RGB
-    type : char
-        The type of green space, g - start, h - checkpoint, j - end, s - starting block
+        The color of the wall in RGB
 
 
 
@@ -28,8 +25,8 @@ class SafeZone(pygame.sprite.Sprite):
         Resets the users stats
 
     """
-    def __init__(self, game, x, y, size, color, type):
-        self.groups = game.all_sprites, game.zones
+    def __init__(self, game, x, y, size, color):
+        self.groups = game.all_sprites, game.walls
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pygame.Surface((size, size))
@@ -37,4 +34,5 @@ class SafeZone(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.type = type
+        self.size = size
+        self.color = color

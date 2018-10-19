@@ -34,9 +34,7 @@ class Wall(pygame.sprite.Sprite):
         self.image = pygame.Surface((size, size))
         self.image.fill(color)
         self.rect = self.image.get_rect()
-        self.x = x
-        self.y = y
+        self.rect.x = x
+        self.rect.y = y
         self.size = size
         self.color = color
-        self.rect.x = x * tile_size
-        self.rect.y = y * tile_size

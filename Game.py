@@ -1,4 +1,4 @@
-from Player import *
+from Bot import *
 
 class Game:
     """
@@ -26,46 +26,59 @@ class Game:
         self.clock = pygame.time.Clock()
         pygame.key.set_repeat(1, 1)
 
-    def new(self):
+    def new(self, level):
         self.all_sprites = pygame.sprite.Group()
         self.players = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
         self.zones = pygame.sprite.Group()
         self.borders = pygame.sprite.Group()
+        self.startx = 4
+        self.starty = 8
 
 
         # Map maker
         with open(file_path, 'r') as file:
             data = file.readlines()
-        for y in range (0, 30):
-            for x in range (0, 40):
+
+        for y in range (1 + 33 * (level - 1), 32 + 33 * (level - 1)):
+            for x in range (0, 41):
                 # Map symbol in the map file
                 symbol = data[y][x]
 
-                if y % 2 == 0 or x % 2 == 0:
+                if (y - 1 - 33 * (level - 1)) % 2 == 0 or x % 2 == 0:
                     # Symbols on the sides of tiles (borders, coins)
                     if symbol == '*':
-                        Border(self, x / 2 * tile_size, y / 2 * tile_size, tile_size, 4, black, y % 2)
+                        Border(self, x / 2 * tile_size, (y - 1 - 33 * (level - 1)) / 2 * tile_size,
+                               tile_size, 4, black, (y - 1 - 33 * (level - 1)) % 2)
                 else:
                     # Symbols on the centres of tiles
                     if symbol == '1':
-                        Wall(self, (x - 1)/2, (y - 1)/2, tile_size, lightsteelblue)
+                        Wall(self, (x - 1)/2 * tile_size,
+                             (y - 2 - 33 * (level - 1))/2 * tile_size, tile_size, lightsteelblue)
 
-                    if symbol == 'g' or symbol == 'h' or symbol == 'j':
-                        SafeZone(self, (x - 1)/2, (y - 1)/2, tile_size, palegreen, symbol)
+                    if symbol == 'g' or symbol == 'h' or symbol == 'j' or symbol == 's':
+                        SafeZone(self, (x - 1)/2 * tile_size,
+                                 (y - 2 - 33 * (level - 1))/2 * tile_size, tile_size, palegreen, symbol)
+                        if symbol == 's':
+                            self.startx = (x - 1)/2
+                            self.starty = (y - 2 - 33 * (level - 1))/2
 
-        self.player = Player(self, 125, 245, 2.5, 30, red, maroon)
 
-
+    def new_player(self):
+        self.player = Player(self, self.startx * tile_size + 6, self.starty * tile_size + 6, 2.25, 28, red, maroon)
 
     def run(self):
         # game loop - set self.playing = False to end the game
         self.run = True
         while self.run:
+            # dt is the time between each frame in seconds
             self.dt = self.clock.tick(FPS) / 1000
+            print(self.dt)
+
             self.events()
             self.update()
             self.draw()
+
 
     def quit(self):
         pygame.quit()
@@ -99,15 +112,5 @@ class Game:
             if event.type == pygame.QUIT:
                 self.quit()
             if event.type == pygame.KEYDOWN:
-                keys = pygame.key.get_pressed()
-                print(keys.index(True))
                 if event.key == pygame.K_ESCAPE:
                     self.quit()
-                if  keys[273] or keys[119]:
-                    self.player.move(dy=-self.player.speed)
-                if keys[276] or keys[97]:
-                    self.player.move(dx=-self.player.speed)
-                if keys[274] or keys[115]:
-                    self.player.move(dy=self.player.speed)
-                if keys[275] or keys[100]:
-                    self.player.move(dx=self.player.speed)

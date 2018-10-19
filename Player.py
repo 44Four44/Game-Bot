@@ -1,4 +1,4 @@
-from enemies import *
+from Enemy import *
 
 
 class Player(pygame.sprite.Sprite):
@@ -64,42 +64,36 @@ class Player(pygame.sprite.Sprite):
         self.game = game
         self.image = pygame.Surface((size, size))
         self.image.fill(border)
-        pygame.draw.rect(self.image, fill, [4, 4, 22, 22])
+        pygame.draw.rect(self.image, fill, [4, 4, 20, 20])
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.x = x
-        self.y = y
+        self.vx = 0
+        self.vy = 0
         self.speed = speed
         self.size = size
         self.fill = fill
         self.border = border
 
-    def move(self, dx=0, dy=0):
-        """
-        Checks for player movement, then updates position
+    def key_pressed(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_w] or keys[pygame.K_UP]:
+            self.vy = self.speed
+        if keys[pygame.K_a] or keys[pygame.K_LEFT]:
+            self.vx = -self.speed
+        if keys[pygame.K_s] or keys[pygame.K_DOWN]:
+            self.vy = -self.speed
+        if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+            self.vx = self.speed
 
-        Parameters
-        ----------
-        dx : int
-            Change in x position
-        dy : int
-            Change in y position
+    def update(self):
+        self.key_pressed()
+        self.x += self.vx
+        self.y += self.vy
+        self.wall_collision('y')
+        self.wall_collision('y')
 
-        Return
-        ------
-        None
-
-        """
-
-        # checks for which keys are pressed and moves the player
-        if not self.wall_collision(dx, dy):
-            self.x += dx
-            self.y += dy
-            self.rect.x = self.x
-            self.rect.y = self.y
-
-    def wall_collision(self, dx=0, dy=0):
+    def wall_collision(self, direction):
         """
         Checks for player collision with walls
 
@@ -118,8 +112,25 @@ class Player(pygame.sprite.Sprite):
             False if the player will not collide with a wall on its next move
 
         """
-        for wall in self.game.walls:
-            if wall.rect.x - self.size < self.x + dx and self.x + dx < wall.rect.x + wall.size \
-                    and wall.rect.y - self.size < self.y + dy and self.y + dy < wall.rect.y + wall.size:
-                return True
-        return False
+        if direction == 'x':
+            wall_hit = pygame.sprite.spritecollide(self, self.game.walls, False)
+            if wall_hit:
+                if self.vx > 0:
+                    self.rect.x = wall_hit[0].rect.left - self.rect.width
+                if self.vx < 0:
+                    self.rect.x = wall_hit[0].rect.right
+                self.vx = 0
+        if direction == 'y':
+            wall_hit = pygame.sprite.spritecollide(self, self.game.walls, False)
+            if wall_hit:
+                if self.vy > 0:
+                    self.rect.y = wall_hit[0].rect.top - self.rect.height
+                if self.vy < 0:
+                    self.rect.y = wall_hit[0].rect.bottom
+                self.vy = 0
+
+    def respawn(self):
+        self.x = 126
+        self.y = 286
+        self.rect.x = self.game.startx * tile_size + 6
+        self.rect.y = self.game.starty * tile_size + 6

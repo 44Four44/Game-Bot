@@ -1,7 +1,7 @@
-from functions import *
-
+from Game import *
 roblox = Game()
+roblox.new(1)
+roblox.new_player()
+roblox.run()
 
-while True:
-    roblox.new()
-    roblox.run()
+
