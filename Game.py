@@ -63,6 +63,31 @@ class Game:
                             self.startx = (x - 1)/2
                             self.starty = (y - 2 - 33 * (level - 1))/2
 
+    def new_random(self):
+        self.all_sprites = pygame.sprite.Group()
+        self.players = pygame.sprite.Group()
+        self.walls = pygame.sprite.Group()
+        self.zones = pygame.sprite.Group()
+        self.borders = pygame.sprite.Group()
+        self.startx = 4
+        self.starty = 8
+
+        for y in range (0, 30):
+            for x in range (0, 40):
+
+                if y % 2 == 0 or x % 2 == 0:
+                    # Symbols on the sides of tiles (borders, coins)
+                    flip = random.uniform(0, 1)
+                    if flip < 0.5:
+                        Border(self, x / 2 * tile_size, y * tile_size, tile_size, 4, black, y % 2)
+                else:
+                    # Symbols on the centres of tiles
+                    flip = random.uniform(0, 1)
+                    if flip < 1/3:
+                        Wall(self, (x - 1)/2 * tile_size, y * tile_size, tile_size, lightsteelblue)
+
+                    if flip >= 1/3 and flip < 2/3:
+                        SafeZone(self, (x - 1)/2 * tile_size, y * tile_size, tile_size, palegreen, 'g')
 
     def new_player(self):
         self.player = Player(self, self.startx * tile_size + 6, self.starty * tile_size + 6, 2.25, 28, red, maroon)
@@ -73,12 +98,11 @@ class Game:
         while self.run:
             # dt is the time between each frame in seconds
             self.dt = self.clock.tick(FPS) / 1000
-            # print(self.dt)
+            print(self.dt)
 
             self.events()
             self.update()
             self.draw()
-
 
     def quit(self):
         pygame.quit()

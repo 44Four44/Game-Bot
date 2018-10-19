@@ -9,7 +9,7 @@ class Enemy(pygame.sprite.Sprite):
     criticals : float list
 
     size : int
-        The side length of the square wall
+        The diameter of the circular enemy
     color : int list
         The color of the wall in RGB
 
