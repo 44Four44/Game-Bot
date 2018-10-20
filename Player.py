@@ -1,4 +1,4 @@
-from Enemy import *
+from EnemyLinear import *
 
 
 class Player(pygame.sprite.Sprite):
@@ -9,6 +9,8 @@ class Player(pygame.sprite.Sprite):
     ----------
     game : Game
         The game that this player is in
+    groups : sprite group
+        All sprite groups this sprite belongs in
     x : float
         The x coordinate of the player
     y : float
@@ -94,6 +96,7 @@ class Player(pygame.sprite.Sprite):
         self.wall_collision('x')
         self.rect.y += self.vy
         self.wall_collision('y')
+        self.enemy_collision()
 
     def wall_collision(self, direction):
         """
@@ -101,17 +104,12 @@ class Player(pygame.sprite.Sprite):
 
         Parameters
         ----------
-        dx : int
-            Change in x position
-        dy : int
-            Change in y position
+        direction : char
+            The direction te player is hitting the wall in, x or y
 
         Return
         ------
-        True : bool
-            True if the player will collide with a wall on its next move
-        False : bool
-            False if the player will not collide with a wall on its next move
+        None
 
         """
         if direction == 'x':
@@ -131,8 +129,13 @@ class Player(pygame.sprite.Sprite):
                     self.rect.y = wall_hit[0].rect.bottom
                 self.vy = 0
 
+    def enemy_collision(self):
+        enemy_hit = pygame.sprite.spritecollide(self, self.game.enemies, False)
+        if enemy_hit:
+            self.respawn()
+
     def respawn(self):
-        self.x = 126
-        self.y = 286
+        self.x = self.game.startx * tile_size + 6
+        self.y = self.game.starty * tile_size + 6
         self.rect.x = self.game.startx * tile_size + 6
         self.rect.y = self.game.starty * tile_size + 6

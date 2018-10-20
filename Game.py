@@ -6,7 +6,26 @@ class Game:
 
     Attributes
     ----------
-    None
+    screen : surface
+        The pygame window that displays this game
+    clock : Clock
+        Pygame clock
+    all_sprites : sprite group
+        A group for all sprites in this game
+    players : sprite group
+        All players in this game
+    walls : sprite group
+        All walls in this game
+    zones : sprite group
+        All green spaces such as starting/ending and checkpoints in this game
+    borders : sprite group
+        All bordered lines in this game
+    enemies : aprite group
+        All enemies in this game
+    startx : int
+        The x coordinate of the starting tile for this game
+    starty : int
+        The y coordinate of the starting tile for this game
 
     Methods
     -------
@@ -32,6 +51,7 @@ class Game:
         self.walls = pygame.sprite.Group()
         self.zones = pygame.sprite.Group()
         self.borders = pygame.sprite.Group()
+        self.enemies = pygame.sprite.Group()
         self.startx = 4
         self.starty = 8
 
@@ -62,13 +82,14 @@ class Game:
                         if symbol == 's':
                             self.startx = (x - 1)/2
                             self.starty = (y - 2 - 33 * (level - 1))/2
-
+        EnemyLinear(self, 22, 3, 400, 211, [[251, 220], [549, 220]], blue, midnightblue)
     def new_random(self):
         self.all_sprites = pygame.sprite.Group()
         self.players = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
         self.zones = pygame.sprite.Group()
         self.borders = pygame.sprite.Group()
+        self.enemies = pygame.sprite.Group()
         self.startx = 4
         self.starty = 8
 
@@ -90,7 +111,7 @@ class Game:
                         SafeZone(self, (x - 1)/2 * tile_size, y * tile_size, tile_size, palegreen, 'g')
 
     def new_player(self):
-        self.player = Player(self, self.startx * tile_size + 6, self.starty * tile_size + 6, 2.25, 28, red, maroon)
+        self.player = Player(self, self.startx * tile_size + 6, self.starty * tile_size + 6, 2, 28, red, maroon)
 
     def run(self):
         # game loop - set self.playing = False to end the game
@@ -98,7 +119,7 @@ class Game:
         while self.run:
             # dt is the time between each frame in seconds
             self.dt = self.clock.tick(FPS) / 1000
-            print(self.dt)
+            # print(self.dt)
 
             self.events()
             self.update()

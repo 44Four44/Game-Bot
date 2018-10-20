@@ -6,6 +6,10 @@ class Border(pygame.sprite.Sprite):
 
     Attributes
     ----------
+    game : Game
+        The game that this border is in
+    groups : sprite group
+        All sprite groups this sprite belongs in
     x : float
         The x coordinate of the border
     y : float

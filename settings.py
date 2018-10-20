@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+import math
 
 pygame.init()
 
@@ -27,4 +28,6 @@ ghostwhite = (248, 247, 255)
 lightsteelblue = (170, 165, 255)
 maroon = (127, 0, 0)
 palegreen = (158, 242, 155)
+blue = (0, 0, 255)
+midnightblue = (0, 0, 68)
 

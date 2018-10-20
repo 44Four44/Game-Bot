@@ -6,6 +6,10 @@ class Wall(pygame.sprite.Sprite):
 
     Attributes
     ----------
+    game : Game
+        The game that this wall is in
+    groups : sprite group
+        All sprite groups this sprite belongs in
     x : float
         The x coordinate of the wall
     y : float
