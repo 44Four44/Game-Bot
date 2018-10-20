@@ -36,12 +36,16 @@ class Player(pygame.sprite.Sprite):
 
     """
 
-    def __init__(self, game, x, y, speed, size, fill, border):
+    def __init__(self, game, control, x, y, speed, size, fill, border):
         """
         Constructor to build a player
 
         Parameters
         ----------
+        game : Game
+            The game that this player is in
+        control : str
+            The type of control that this player will move to, 'keys' or 'random'
         x : float
             The x coordinate of the player
         y : float
@@ -64,6 +68,7 @@ class Player(pygame.sprite.Sprite):
         self.groups = game.all_sprites, game.players
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
+        self.control = control
         self.image = pygame.Surface((size, size))
         self.image.fill(border)
         pygame.draw.rect(self.image, fill, [4, 4, 20, 20])
@@ -77,21 +82,38 @@ class Player(pygame.sprite.Sprite):
         self.fill = fill
         self.border = border
 
-    def key_pressed(self):
-        self.vx = 0
-        self.vy = 0
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_s] or keys[pygame.K_DOWN]:
-            self.vy = self.speed
-        if keys[pygame.K_w] or keys[pygame.K_UP]:
-            self.vy = -self.speed
-        if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
-            self.vx = self.speed
-        if keys[pygame.K_a] or keys[pygame.K_LEFT]:
-            self.vx = -self.speed
+    def move(self, control):
+        if control == 'keys':
+            self.vx = 0
+            self.vy = 0
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_s] or keys[pygame.K_DOWN]:
+                self.vy = self.speed
+            if keys[pygame.K_w] or keys[pygame.K_UP]:
+                self.vy = -self.speed
+            if keys[pygame.K_a] or keys[pygame.K_LEFT]:
+                self.vx = -self.speed
+            if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
+                self.vx = self.speed
+
+        elif control == 'random':
+            change = random.randint(0, 10)
+            if change == 0:
+                self.vx = 0
+                self.vy = 0
+                xprob = random.randint(0, 2)
+                yprob = random.randint(0, 2)
+                if yprob == 0:
+                    self.vy = self.speed
+                if yprob == 1:
+                    self.vy = -self.speed
+                if xprob == 0:
+                    self.vx = -self.speed
+                if xprob == 1:
+                    self.vx = self.speed
 
     def update(self):
-        self.key_pressed()
+        self.move(self.control)
         self.rect.x += self.vx
         self.wall_collision('x')
         self.rect.y += self.vy

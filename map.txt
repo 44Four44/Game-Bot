@@ -96,3 +96,16 @@
 -----------------------------------------
 -1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-1-
 -----------------------------------------
+
+
+
+        EnemyLinear(self, 22, 4.65, 251, 220, [[251, 220], [549, 220]], blue, midnightblue)
+        EnemyLinear(self, 22, 4.65, 549, 260, [[549, 260], [251, 260]], blue, midnightblue)
+        EnemyLinear(self, 22, 4.65, 251, 300, [[251, 300], [549, 300]], blue, midnightblue)
+        EnemyLinear(self, 22, 4.65, 549, 340, [[549, 340], [251, 340]], blue, midnightblue)
+        EnemyLinear(self, 22, 4.65, 251, 380, [[251, 380], [549, 380]], blue, midnightblue)
+
+        EnemyLinear(self, 22, 4.65, 251, 220, [[260, 220], [540, 220], [540, 380], [260, 380]], blue, midnightblue)
+        EnemyLinear(self, 22, 4.65, 540, 260, [[500, 260], [300, 260], [300, 340], [500, 340]], blue, midnightblue)
+        EnemyLinear(self, 22, 4.65, 260, 340, [[300, 340], [500, 340], [500, 260], [300, 260]], blue, midnightblue)
+        EnemyLinear(self, 22, 4.65, 540, 380, [[540, 380], [260, 380], [260, 220], [540, 220]], blue, midnightblue)

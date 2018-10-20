@@ -82,7 +82,12 @@ class Game:
                         if symbol == 's':
                             self.startx = (x - 1)/2
                             self.starty = (y - 2 - 33 * (level - 1))/2
-        EnemyLinear(self, 22, 3, 400, 211, [[251, 220], [549, 220]], blue, midnightblue)
+        EnemyLinear(self, 22, 4.65, 251, 220, [[251, 220], [549, 220]], blue, midnightblue)
+        EnemyLinear(self, 22, 4.65, 549, 260, [[549, 260], [251, 260]], blue, midnightblue)
+        EnemyLinear(self, 22, 4.65, 251, 300, [[251, 300], [549, 300]], blue, midnightblue)
+        EnemyLinear(self, 22, 4.65, 549, 340, [[549, 340], [251, 340]], blue, midnightblue)
+        EnemyLinear(self, 22, 4.65, 251, 380, [[251, 380], [549, 380]], blue, midnightblue)
+
     def new_random(self):
         self.all_sprites = pygame.sprite.Group()
         self.players = pygame.sprite.Group()
@@ -111,7 +116,7 @@ class Game:
                         SafeZone(self, (x - 1)/2 * tile_size, y * tile_size, tile_size, palegreen, 'g')
 
     def new_player(self):
-        self.player = Player(self, self.startx * tile_size + 6, self.starty * tile_size + 6, 2, 28, red, maroon)
+        self.player = Player(self, 'random', self.startx * tile_size + 6, self.starty * tile_size + 6, 2, 28, red, maroon)
 
     def run(self):
         # game loop - set self.playing = False to end the game
@@ -120,7 +125,6 @@ class Game:
             # dt is the time between each frame in seconds
             self.dt = self.clock.tick(FPS) / 1000
             # print(self.dt)
-
             self.events()
             self.update()
             self.draw()
