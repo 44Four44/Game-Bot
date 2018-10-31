@@ -82,6 +82,9 @@ class Player(pygame.sprite.Sprite):
         self.fill = fill
         self.border = border
 
+        # AI
+        self.moves = []
+
     def move(self, control):
         if control == 'keys':
             self.vx = 0

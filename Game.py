@@ -48,40 +48,58 @@ class Game:
     def new(self, level):
         self.all_sprites = pygame.sprite.Group()
         self.players = pygame.sprite.Group()
+        self.player_list = []
         self.walls = pygame.sprite.Group()
         self.zones = pygame.sprite.Group()
         self.borders = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
         self.startx = 4
         self.starty = 8
+        # Checkpoints for AI pathing
+        self.checkpoints_list = []
+        self.checkpoints = pygame.sprite.Group()
+        for i in range (0, 10):
+            self.checkpoints_list.append([])
 
 
         # Map maker
         with open(file_path, 'r') as file:
             data = file.readlines()
-
-        for y in range (1 + 33 * (level - 1), 32 + 33 * (level - 1)):
+        print(data)
+        print(data.index('>>>>>>>>>>>>>>>>\n', 0, 89))
+        for y in range (2 + 33 * (level - 1), 33 + 33 * (level - 1)):
             for x in range (0, 41):
                 # Map symbol in the map file
                 symbol = data[y][x]
 
-                if (y - 1 - 33 * (level - 1)) % 2 == 0 or x % 2 == 0:
+                if (y - 2 - 33 * (level - 1)) % 2 == 0 or x % 2 == 0:
                     # Symbols on the sides of tiles (borders, coins)
+                    # Respective coordinates on the actual game window
+                    mapx = x / 2 * tile_size
+                    mapy = (y - 2 - 33 * (level - 1)) / 2 * tile_size
                     if symbol == '*':
-                        Border(self, x / 2 * tile_size, (y - 1 - 33 * (level - 1)) / 2 * tile_size,
-                               tile_size, 4, black, (y - 1 - 33 * (level - 1)) % 2)
+                        Border(self, mapx, mapy, tile_size, 4, black, (y - 1 - 33 * (level - 1)) % 2)
                 else:
                     # Symbols on the centres of tiles
+                    # Respective coordinates on the actual game window
+                    mapx = (x - 1) / 2 * tile_size
+                    mapy = (y - 3 - 33 * (level - 1)) / 2 * tile_size
                     if symbol == '1':
-                        Wall(self, (x - 1)/2 * tile_size,
-                             (y - 2 - 33 * (level - 1))/2 * tile_size, tile_size, lightsteelblue)
+                        Wall(self, mapx, mapy, tile_size, lightsteelblue)
 
                     if symbol == 'g' or symbol == 'h' or symbol == 'j' or symbol == 's':
-                        SafeZone(self, (x - 1)/2 * tile_size,
-                                 (y - 2 - 33 * (level - 1))/2 * tile_size, tile_size, palegreen, symbol)
+                        SafeZone(self, mapx, mapy, tile_size, palegreen, symbol)
                         if symbol == 's':
                             self.startx = (x - 1)/2
                             self.starty = (y - 2 - 33 * (level - 1))/2
+                    # Check points
+                    if symbol in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
+                        self.checkpoints_list[int(symbol)].append([mapx, mapy])
+
+        # Remove empty checkpoints
+        self.checkpoints_list = filter(None, self.checkpoints_list)
+
+        # Create enemies
         EnemyLinear(self, 22, 4.65, 251, 220, [[251, 220], [549, 220]], blue, midnightblue)
         EnemyLinear(self, 22, 4.65, 549, 260, [[549, 260], [251, 260]], blue, midnightblue)
         EnemyLinear(self, 22, 4.65, 251, 300, [[251, 300], [549, 300]], blue, midnightblue)
@@ -115,9 +133,10 @@ class Game:
                     if flip >= 1/3 and flip < 2/3:
                         SafeZone(self, (x - 1)/2 * tile_size, y * tile_size, tile_size, palegreen, 'g')
 
-    def new_player(self):
-        self.player = Player(self, 'random', self.startx * tile_size + 6, self.starty * tile_size + 6, 2, 28, red, maroon)
-
+    def new_player(self, control):
+        self.player = Player(self, control, self.startx * tile_size + 6, self.starty * tile_size + 6, 2, 28, red, maroon)
+        self.player_list.append(self.player)
+  
     def run(self):
         # game loop - set self.playing = False to end the game
         self.run = True
