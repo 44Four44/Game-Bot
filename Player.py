@@ -89,31 +89,81 @@ class Player(pygame.sprite.Sprite):
         if control == 'keys':
             self.vx = 0
             self.vy = 0
+            direction = 0
             keys = pygame.key.get_pressed()
             if keys[pygame.K_s] or keys[pygame.K_DOWN]:
                 self.vy = self.speed
+                direction = 5
             if keys[pygame.K_w] or keys[pygame.K_UP]:
                 self.vy = -self.speed
+                direction = 1
             if keys[pygame.K_a] or keys[pygame.K_LEFT]:
                 self.vx = -self.speed
+                if direction == 5:
+                    direction = 6
+                elif direction == 1:
+                    direction = 8
+                else:
+                    direction = 7
             if keys[pygame.K_d] or keys[pygame.K_RIGHT]:
                 self.vx = self.speed
+                if direction == 5:
+                    direction = 4
+                elif direction == 1:
+                    direction = 2
+                else:
+                    direction = 3
+
+            with open(moves_path, 'a') as file:
+                file.write(str(direction))
 
         elif control == 'random':
+            # 0 - rest, 1 - up, 2 - up right ... 8 - up left
+            direction = random.randint(0, 8)
+            # Probability of changing directions
             change = random.randint(0, 10)
+
             if change == 0:
                 self.vx = 0
                 self.vy = 0
-                xprob = random.randint(0, 2)
-                yprob = random.randint(0, 2)
-                if yprob == 0:
+                if direction == 4 or direction == 5 or direction == 6:
                     self.vy = self.speed
-                if yprob == 1:
+                if direction == 8 or direction == 1 or direction == 2:
                     self.vy = -self.speed
-                if xprob == 0:
+                if direction == 6 or direction == 7 or direction == 8:
                     self.vx = -self.speed
-                if xprob == 1:
+                if direction == 2 or direction == 3 or direction == 4:
                     self.vx = self.speed
+
+            if self.game.tick == 0:
+                with open(moves_path, 'a') as file:
+                    file.write(str(direction) + "\n")
+            else:
+                with open(moves_path, 'r') as file:
+                    data = file.readlines()
+                line = data[self.game.player_list.index(self)]
+                data[self.game.player_list.index(self)] = line[:len(line)-1] + str(direction) + line[len(line):] + "\n"
+                with open(moves_path, 'w') as file:
+                    file.writelines(data)
+
+        elif control == 'read':
+            direction = 0
+            # Read moves from moves file
+            with open(moves_path, 'r') as file:
+                data = file.readlines()
+            if self.game.tick < len(data[0]):
+                direction = int(list(data[0])[self.game.tick])
+
+            self.vx = 0
+            self.vy = 0
+            if direction == 4 or direction == 5 or direction == 6:
+                self.vy = self.speed
+            if direction == 8 or direction == 1 or direction == 2:
+                self.vy = -self.speed
+            if direction == 6 or direction == 7 or direction == 8:
+                self.vx = -self.speed
+            if direction == 2 or direction == 3 or direction == 4:
+                self.vx = self.speed
 
     def update(self):
         self.move(self.control)

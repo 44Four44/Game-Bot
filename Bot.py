@@ -29,4 +29,15 @@ class Bot:
 
         self.game = game
 
+    def bubble_sort(self):
+        with open(map_path, 'r') as file:
+            data = file.readlines()
+        for i in range (0, 100):
+            for j in range (0,100):
+                if data[j][300] > data[j + 1][300]:
+                    x = data[j][300]
+                    data[j][300] = data[j + 1][300]
+                    data[j + 1][300] = x
 
+    def checkpoint_score(self, Player):
+        return 1

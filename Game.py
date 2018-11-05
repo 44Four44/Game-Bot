@@ -44,6 +44,8 @@ class Game:
         pygame.display.set_caption(Title)
         self.clock = pygame.time.Clock()
         pygame.key.set_repeat(1, 1)
+        # Frame count
+        self.tick = 0
 
     def new(self, level):
         self.all_sprites = pygame.sprite.Group()
@@ -55,6 +57,7 @@ class Game:
         self.enemies = pygame.sprite.Group()
         self.startx = 4
         self.starty = 8
+        self.level = level
         # Checkpoints for AI pathing
         self.checkpoints_list = []
         self.checkpoints = pygame.sprite.Group()
@@ -63,27 +66,31 @@ class Game:
 
 
         # Map maker
-        with open(file_path, 'r') as file:
+        with open(map_path, 'r') as file:
             data = file.readlines()
-        print(data)
-        print(data.index('>>>>>>>>>>>>>>>>\n', 0, 89))
-        for y in range (2 + 33 * (level - 1), 33 + 33 * (level - 1)):
+
+        # The line number of the level in the map file
+        index = data.index(">>>>>>>>>>>>>>>> Level " + str(self.level) + "\n")
+        print(index)
+
+        # Walls ; Green Space ; borders
+        for y in range (index + 2, index + 33):
             for x in range (0, 41):
                 # Map symbol in the map file
                 symbol = data[y][x]
 
-                if (y - 2 - 33 * (level - 1)) % 2 == 0 or x % 2 == 0:
-                    # Symbols on the sides of tiles (borders, coins)
+                if (y - 2 - index) % 2 == 0 or x % 2 == 0:
+                    # Symbols on the sides of tiles (borders)
                     # Respective coordinates on the actual game window
-                    mapx = x / 2 * tile_size
-                    mapy = (y - 2 - 33 * (level - 1)) / 2 * tile_size
-                    if symbol == '*':
-                        Border(self, mapx, mapy, tile_size, 4, black, (y - 1 - 33 * (level - 1)) % 2)
+                    mapx = x * tile_size / 2
+                    mapy = (y - 2 - index) * tile_size / 2
+                    if symbol == '-' or symbol == '|':
+                        Border(self, mapx, mapy, tile_size, 4, black, (y - 2 - index) % 2)
                 else:
                     # Symbols on the centres of tiles
                     # Respective coordinates on the actual game window
                     mapx = (x - 1) / 2 * tile_size
-                    mapy = (y - 3 - 33 * (level - 1)) / 2 * tile_size
+                    mapy = (y - 3 - index) / 2 * tile_size
                     if symbol == '1':
                         Wall(self, mapx, mapy, tile_size, lightsteelblue)
 
@@ -91,20 +98,38 @@ class Game:
                         SafeZone(self, mapx, mapy, tile_size, palegreen, symbol)
                         if symbol == 's':
                             self.startx = (x - 1)/2
-                            self.starty = (y - 2 - 33 * (level - 1))/2
-                    # Check points
-                    if symbol in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
-                        self.checkpoints_list[int(symbol)].append([mapx, mapy])
+                            self.starty = (y - 2 - index)/2
+        # Coins
+        for y in range (index + 34, index + 64):
+            for x in range(0, 41):
+                # Map symbol in the map file
+                symbol = data[y][x]
 
-        # Remove empty checkpoints
-        self.checkpoints_list = filter(None, self.checkpoints_list)
-
+        # Checkpoints
+        for y in range(index + 66, index + 80):
+            print(y)
+            for x in range(0, 41):
+                # Map symbol in the map file
+                # symbol = data[y][x]
+                x = 2
         # Create enemies
         EnemyLinear(self, 22, 4.65, 251, 220, [[251, 220], [549, 220]], blue, midnightblue)
         EnemyLinear(self, 22, 4.65, 549, 260, [[549, 260], [251, 260]], blue, midnightblue)
         EnemyLinear(self, 22, 4.65, 251, 300, [[251, 300], [549, 300]], blue, midnightblue)
         EnemyLinear(self, 22, 4.65, 549, 340, [[549, 340], [251, 340]], blue, midnightblue)
         EnemyLinear(self, 22, 4.65, 251, 380, [[251, 380], [549, 380]], blue, midnightblue)
+
+
+
+        """
+                # Checkpoints
+                if symbol in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
+                        self.checkpoints_list[int(symbol)].append([mapx, mapy])
+
+        # Remove empty checkpoints
+        #self.checkpoints_list = filter(None, self.checkpoints_list)
+        """
+
 
     def new_random(self):
         self.all_sprites = pygame.sprite.Group()
@@ -147,6 +172,8 @@ class Game:
             self.events()
             self.update()
             self.draw()
+            # Update frame
+            self.tick += 1
 
     def quit(self):
         pygame.quit()

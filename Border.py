@@ -32,7 +32,7 @@ class Border(pygame.sprite.Sprite):
         self.groups = game.all_sprites, game.borders
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pygame.Surface((length, length))
+        self.image = pygame.Surface((length, length), pygame.SRCALPHA, 32)
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
@@ -40,8 +40,8 @@ class Border(pygame.sprite.Sprite):
         self.width = width
         self.color = color
         self.align = align
-        self.rect.x = x * tile_size - tile_size/2
-        self.rect.y = y * tile_size - tile_size/2
+        self.rect.x = x
+        self.rect.y = y
 
     def draw(self):
         """
