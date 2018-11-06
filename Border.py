@@ -1,4 +1,4 @@
-from settings import *
+from functions import *
 
 class Border(pygame.sprite.Sprite):
     """

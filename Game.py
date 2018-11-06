@@ -1,4 +1,4 @@
-from Bot import *
+from Player import *
 
 class Game:
     """
@@ -51,6 +51,7 @@ class Game:
         self.all_sprites = pygame.sprite.Group()
         self.players = pygame.sprite.Group()
         self.player_list = []
+        self.playercount = 0
         self.walls = pygame.sprite.Group()
         self.zones = pygame.sprite.Group()
         self.borders = pygame.sprite.Group()
@@ -62,6 +63,8 @@ class Game:
         self.checkpoints_list = []
         for i in range (0, 10):
             self.checkpoints_list.append([])
+        # Gneration number
+        self.generation = 0
 
 
         # Map maker
@@ -106,28 +109,21 @@ class Game:
 
         # Checkpoints
         for y in range(index + 66, index + 81):
-            for x in range(0, 41):
+            for x in range(0, 20):
                 # Map symbol in the map file
-                # symbol = data[y][x]
-                x = 2
+                symbol = data[y][x]
+                if symbol != '.':
+                    self.checkpoints_list[int(symbol)].append(x * tile_size)
+                    self.checkpoints_list[int(symbol)].append((y - 66) * tile_size)
+
+        print(self.checkpoints_list)
+
         # Create enemies
         EnemyLinear(self, 22, 4.65, 251, 220, [[251, 220], [549, 220]], blue, midnightblue)
         EnemyLinear(self, 22, 4.65, 549, 260, [[549, 260], [251, 260]], blue, midnightblue)
         EnemyLinear(self, 22, 4.65, 251, 300, [[251, 300], [549, 300]], blue, midnightblue)
         EnemyLinear(self, 22, 4.65, 549, 340, [[549, 340], [251, 340]], blue, midnightblue)
         EnemyLinear(self, 22, 4.65, 251, 380, [[251, 380], [549, 380]], blue, midnightblue)
-
-
-
-        """
-                # Checkpoints
-                if symbol in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']:
-                        self.checkpoints_list[int(symbol)].append([mapx, mapy])
-
-        # Remove empty checkpoints
-        #self.checkpoints_list = filter(None, self.checkpoints_list)
-        """
-
 
     def new_random(self):
         self.all_sprites = pygame.sprite.Group()
@@ -154,12 +150,23 @@ class Game:
                         Wall(self, (x - 1)/2 * tile_size, y * tile_size, tile_size, lightsteelblue)
 
                     if flip >= 1/3 and flip < 2/3:
-                        SafeZone(self, (x - 1)/2 * tile_size, y * tile_size, tile_size, palegreen, 'g')
+                        Zone(self, (x - 1)/2 * tile_size, y * tile_size, tile_size, palegreen, 'g')
 
-    def new_player(self, control):
-        self.player = Player(self, control, self.startx * tile_size + 6, self.starty * tile_size + 6, 2, 28, red, maroon)
-        self.player_list.append(self.player)
-  
+    def new_player(self, control, number):
+        for i in range (0, number):
+            self.player = Player(self, control, self.startx * tile_size + 6, self.starty * tile_size + 6, 2, 28, red, maroon)
+            self.player_list.append(self.player)
+        self.player_count = number
+
+    def end_gen(self):
+        # End the generation
+        with open(moves_path, 'a') as file:
+            file.write("END OF GENERATION " + str(self.generation) + "\n")
+        self.generation += 1
+        # self.new_player('read')
+        # Plays the best moves from each generation
+        # for i in range (0, self.generation)
+        self.new_player('random', 10)
     def run(self):
         # game loop - set self.playing = False to end the game
         self.run = True
@@ -168,11 +175,14 @@ class Game:
             self.dt = self.clock.tick(FPS) / 1000
             # print(self.dt)
             self.events()
+
+            # New generation
+            if len(self.player_list) == 0:
+                self.end_gen()
             self.update()
             self.draw()
             # Update frame
             self.tick += 1
-            print(self.player_list)
 
     def quit(self):
         pygame.quit()

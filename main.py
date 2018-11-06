@@ -1,10 +1,8 @@
 from Game import *
 roblox = Game()
-ai = Bot(roblox)
 roblox.new(1)
-
-for i in range (0, 100):
-    roblox.new_player('random')
+print(format(0.1231, '.8f'))
+roblox.new_player('random', 50)
 
 roblox.run()
 
