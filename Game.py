@@ -162,11 +162,17 @@ class Game:
         # End the generation
         with open(moves_path, 'a') as file:
             file.write("END OF GENERATION " + str(self.generation) + "\n")
+
+        # Sort moves based on their scores
+        bubble_sort((self.player_count + 1) * self.generation,
+                    (self.player_count + 1) * self.generation + self.player_count - 1)
+
         self.generation += 1
+
         # self.new_player('read')
         # Plays the best moves from each generation
         # for i in range (0, self.generation)
-        self.new_player('random', 10)
+        self.new_player('random', self.player_count)
     def run(self):
         # game loop - set self.playing = False to end the game
         self.run = True

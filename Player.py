@@ -86,6 +86,7 @@ class Player(pygame.sprite.Sprite):
         # AI
         self.moves = ''
         self.changes = 0
+        self.change_limit = 20
         # The nth targeted checkpoint
         self.checkpoint = 0
 
@@ -131,6 +132,7 @@ class Player(pygame.sprite.Sprite):
                 self.changes += 1
                 self.vx = 0
                 self.vy = 0
+
                 if direction == 4 or direction == 5 or direction == 6:
                     self.vy = self.speed
                 if direction == 8 or direction == 1 or direction == 2:
@@ -140,6 +142,7 @@ class Player(pygame.sprite.Sprite):
                 if direction == 2 or direction == 3 or direction == 4:
                     self.vx = self.speed
                 self.direction = direction
+
             self.moves += str(self.direction)
 
     def read_moves(self, line):
@@ -163,7 +166,7 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         # Check if direction change limit is reached
-        if self.changes > 20:
+        if self.changes > self.change_limit:
             self.end_moves()
         if self.control != 'read':
             self.move(self.control)

@@ -1,14 +1,28 @@
 from settings import *
 
 def bubble_sort(start, end):
-    with open(map_path, 'r') as file:
+    with open(moves_path, 'r') as file:
         data = file.readlines()
-    for i in range (0, 100):
-        for j in range (0,100):
-            if data[j][300] > data[j + 1][300]:
-                x = data[j][300]
-                data[j][300] = data[j + 1][300]
-                data[j + 1][300] = x
+
+    # Cluster that is going to be sorted
+    cluster = data[start : end + 1]
+
+    for i in range (0, len(cluster) - 1):
+        for j in range (0, len(cluster) - 1):
+            print(str(i) + " , " + str(j))
+            # Swap if value is greater than the next value
+            current = cluster[j]
+            next = cluster[j + 1]
+            if float(current[7 : 14]) > float(next[7 : 14]):
+                cluster[j], cluster[j + 1] = next, current
+                print("bigger")
+            else:
+                print("smaller")
+
+    # Write back to moves file
+    data[start : end + 1] = cluster
+    with open(moves_path, 'w') as file:
+        file.writelines(data)
 
 def checkpoint_score(Game, Player):
     coordinates = Game.checkpoints_list[Player.checkpoint]
@@ -28,6 +42,6 @@ def checkpoint_score(Game, Player):
                                 float(prev[1] + tile_size / 2))
     score = Player.checkpoint + 1 - dist / total_dist
     if score < 0:
-        return format(score, '.9f')
+        return format(score, '.4f')
     else:
-        return format(score, '.10f')
+        return format(score, '.5f')
