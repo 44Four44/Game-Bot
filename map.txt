@@ -261,3 +261,15 @@ Checkpoints
         EnemyLinear(self, 22, 4.65, 540, 260, [[500, 260], [300, 260], [300, 340], [500, 340]], blue, midnightblue)
         EnemyLinear(self, 22, 4.65, 260, 340, [[300, 340], [500, 340], [500, 260], [300, 260]], blue, midnightblue)
         EnemyLinear(self, 22, 4.65, 540, 380, [[540, 380], [260, 380], [260, 220], [540, 220]], blue, midnightblue)
+
+
+            if self.game.tick == 0:
+                with open(moves_path, 'a') as file:
+                    file.write(str(direction) + "\n")
+            else:
+                with open(moves_path, 'r') as file:
+                    data = file.readlines()
+                line = data[self.game.player_list.index(self)]
+                data[self.game.player_list.index(self)] = line[:len(line)-1] + str(direction) + line[len(line):] + "\n"
+                with open(moves_path, 'w') as file:
+                    file.writelines(data)

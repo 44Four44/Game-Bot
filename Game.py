@@ -60,7 +60,6 @@ class Game:
         self.level = level
         # Checkpoints for AI pathing
         self.checkpoints_list = []
-        self.checkpoints = pygame.sprite.Group()
         for i in range (0, 10):
             self.checkpoints_list.append([])
 
@@ -95,19 +94,18 @@ class Game:
                         Wall(self, mapx, mapy, tile_size, lightsteelblue)
 
                     if symbol == 'g' or symbol == 'h' or symbol == 'j' or symbol == 's':
-                        SafeZone(self, mapx, mapy, tile_size, palegreen, symbol)
+                        Zone(self, mapx, mapy, tile_size, palegreen, symbol)
                         if symbol == 's':
                             self.startx = (x - 1)/2
                             self.starty = (y - 2 - index)/2
         # Coins
-        for y in range (index + 34, index + 64):
+        for y in range (index + 34, index + 65):
             for x in range(0, 41):
                 # Map symbol in the map file
                 symbol = data[y][x]
 
         # Checkpoints
-        for y in range(index + 66, index + 80):
-            print(y)
+        for y in range(index + 66, index + 81):
             for x in range(0, 41):
                 # Map symbol in the map file
                 # symbol = data[y][x]
@@ -174,6 +172,7 @@ class Game:
             self.draw()
             # Update frame
             self.tick += 1
+            print(self.player_list)
 
     def quit(self):
         pygame.quit()

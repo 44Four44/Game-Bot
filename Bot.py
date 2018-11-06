@@ -40,4 +40,4 @@ class Bot:
                     data[j + 1][300] = x
 
     def checkpoint_score(self, Player):
-        return 1
+        return Player.checkpoint +

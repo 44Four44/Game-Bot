@@ -1,5 +1,5 @@
 from Border import *
-class SafeZone(pygame.sprite.Sprite):
+class Zone(pygame.sprite.Sprite):
     """
     Safe / green zones for checkpoints
 

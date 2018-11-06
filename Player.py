@@ -77,13 +77,17 @@ class Player(pygame.sprite.Sprite):
         self.rect.y = y
         self.vx = 0
         self.vy = 0
+        self.direction = 0
         self.speed = speed
         self.size = size
         self.fill = fill
         self.border = border
 
         # AI
-        self.moves = []
+        self.moves = ''
+        self.changes = 0
+        # The nth targeted checkpoint
+        self.checkpoint = 0
 
     def move(self, control):
         if control == 'keys':
@@ -113,9 +117,8 @@ class Player(pygame.sprite.Sprite):
                     direction = 2
                 else:
                     direction = 3
-
-            with open(moves_path, 'a') as file:
-                file.write(str(direction))
+            self.direction = direction
+            self.moves += str(self.direction)
 
         elif control == 'random':
             # 0 - rest, 1 - up, 2 - up right ... 8 - up left
@@ -124,6 +127,8 @@ class Player(pygame.sprite.Sprite):
             change = random.randint(0, 10)
 
             if change == 0:
+                # Another directional change
+                self.changes += 1
                 self.vx = 0
                 self.vy = 0
                 if direction == 4 or direction == 5 or direction == 6:
@@ -134,17 +139,8 @@ class Player(pygame.sprite.Sprite):
                     self.vx = -self.speed
                 if direction == 2 or direction == 3 or direction == 4:
                     self.vx = self.speed
-
-            if self.game.tick == 0:
-                with open(moves_path, 'a') as file:
-                    file.write(str(direction) + "\n")
-            else:
-                with open(moves_path, 'r') as file:
-                    data = file.readlines()
-                line = data[self.game.player_list.index(self)]
-                data[self.game.player_list.index(self)] = line[:len(line)-1] + str(direction) + line[len(line):] + "\n"
-                with open(moves_path, 'w') as file:
-                    file.writelines(data)
+                self.direction = direction
+            self.moves += str(self.direction)
 
         elif control == 'read':
             direction = 0
@@ -166,6 +162,8 @@ class Player(pygame.sprite.Sprite):
                 self.vx = self.speed
 
     def update(self):
+        if self.changes > 20:
+            self.end_moves()
         self.move(self.control)
         self.rect.x += self.vx
         self.wall_collision('x')
@@ -207,10 +205,21 @@ class Player(pygame.sprite.Sprite):
     def enemy_collision(self):
         enemy_hit = pygame.sprite.spritecollide(self, self.game.enemies, False)
         if enemy_hit:
-            self.respawn()
+            self.end_moves()
 
     def respawn(self):
         self.x = self.game.startx * tile_size + 6
         self.y = self.game.starty * tile_size + 6
         self.rect.x = self.game.startx * tile_size + 6
         self.rect.y = self.game.starty * tile_size + 6
+
+    def end_moves(self):
+        # Remove from sprite lists
+        self.game.all_sprites.remove(self)
+        self.game.players.remove(self)
+        # Remove from player list and clears index
+        self.game.player_list.pop(self.game.player_list.index(self))
+        # Writes moves pre death into moves file to be sorted
+        with open(moves_path, 'a') as file:
+            file.write(self.moves + "\n")
+
