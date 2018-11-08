@@ -2,7 +2,7 @@ from SafeZone import *
 
 class Wall(pygame.sprite.Sprite):
     """
-    Walls
+    A wall that serves as an obstacle for the player
 
     Attributes
     ----------
@@ -19,16 +19,9 @@ class Wall(pygame.sprite.Sprite):
     color : int list
         The color of the wall in RGB
 
-
-
     Methods
     -------
-    die(None) -> None
-        Deletes the player
-    reset(None) -> None
-        Increases the number of attempted problems for a specific problem type by one
-    reset(None) -> None
-        Resets the users stats
+    None
 
     """
     def __init__(self, game, x, y, size, color):

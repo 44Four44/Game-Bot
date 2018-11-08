@@ -1,4 +1,5 @@
 import pygame
+import time
 import sys
 import random
 import math
@@ -19,7 +20,7 @@ moves_path = '/Users/EthanWang/Game_Bot/moves.txt'
 
 # Game settings
 FPS = 60
-zoom = 10
+zoom = 5
 Title = "mmmmmmmmmm"
 
 # Colors

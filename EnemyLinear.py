@@ -2,7 +2,7 @@ from EnemyCircular import *
 
 class EnemyLinear(pygame.sprite.Sprite):
     """
-    Enemies
+    Enemy that travels in a linear path
 
     Attributes
     ----------

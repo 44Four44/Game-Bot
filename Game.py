@@ -240,7 +240,7 @@ class Game:
             file.write("END OF GENERATION " + str(self.generation) + "\n")
 
         # Sort moves based on their scores
-        bubble_sort((self.player_count + 1) * self.generation,
+        python_sort((self.player_count + 1) * self.generation,
                     (self.player_count + 1) * self.generation + self.player_count - 1)
 
         with open(moves_path, 'r') as file:

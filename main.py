@@ -8,10 +8,15 @@
 #-----------------------------------------------------------------------------
 
 from Game import *
+
+with('/Users/EthanWang/Game_Bot/moves.txt'):
+    
 roblox = Game()
 roblox.new(1)
 
-roblox.new_player('random', 1000)
+roblox.new_player('random', 100)
+
+clear_moves()
 
 roblox.run()
 
