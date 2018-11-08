@@ -36,7 +36,7 @@ class Game:
         The y coordinate of the ending position of the most recent generation
     level : int
         The level of the game, used to find level data in map file
-    checkpoints_list : int list list
+    checkpoints_list : float list list
         Stores the checkpoints' x and y coordinates
     checkpoint : int
         Index of currently targetted checkpoint in 'checkpoints_list'

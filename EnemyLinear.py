@@ -45,12 +45,12 @@ class EnemyLinear(pygame.sprite.Sprite):
 
     Methods
     -------
-    die(None) -> None
-        Deletes the player
+    moves(None) -> None
+        Moves the enemy, following its critical track
+    update(None) -> None
+        Updates the enemy's position after it's moves have been made
     reset(None) -> None
-        Increases the number of attempted problems for a specific problem type by one
-    reset(None) -> None
-        Resets the users stats
+        Moves the enemy back to its original starting position
 
     """
 
@@ -82,16 +82,19 @@ class EnemyLinear(pygame.sprite.Sprite):
         None
 
         """
-
+        # Sprites
         self.groups = game.all_sprites, game.enemies
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.game = game
+
+        # Enemy model
         self.image = pygame.Surface((size, size), pygame.SRCALPHA, 32)
         pygame.draw.circle(self.image, border, [int(size/2), int(size/2)], int(size/2))
         pygame.draw.circle(self.image, fill, [int(size/2), int(size/2)], int(size/2) - 4)
         self.rect = self.image.get_rect()
         self.rect.x = x - size/2
         self.rect.y = y - size/2
+
         self.size = size
         self.speed = speed
         self.x = x
@@ -106,6 +109,19 @@ class EnemyLinear(pygame.sprite.Sprite):
         self.border = border
 
     def move(self):
+        """
+        Moves the enemy, following its critical track
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+
+        """
+
         if math.hypot(self.nextx - self.x, self.nexty - self.y) <= self.speed:
             self.x = self.nextx
             self.y = self.nexty
@@ -124,11 +140,37 @@ class EnemyLinear(pygame.sprite.Sprite):
             self.y += (self.nexty - self.prevy) * (self.speed / hyp)
 
     def update(self):
+        """
+        Updates the enemy's position after it's moves have been made
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+
+        """
+
         self.move()
         self.rect.x = self.x - self.size/2
         self.rect.y = self.y - self.size/2
 
     def reset(self):
+        """
+        Moves the enemy back to its original starting position
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+
+        """
+
         self.x = self.criticals[0][0]
         self.y = self.criticals[0][1]
         self.rect.x = self.x - self.size/2

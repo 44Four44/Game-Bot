@@ -86,7 +86,7 @@ class Player(pygame.sprite.Sprite):
         # AI
         self.moves = ''
         self.changes = 0
-        self.change_limit = 50
+        self.change_limit = 200
         # The nth targeted checkpoint
         self.checkpoint = self.game.checkpoint
         self.hit = False
