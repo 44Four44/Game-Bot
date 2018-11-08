@@ -86,9 +86,10 @@ class Player(pygame.sprite.Sprite):
         # AI
         self.moves = ''
         self.changes = 0
-        self.change_limit = 20
+        self.change_limit = 50
         # The nth targeted checkpoint
-        self.checkpoint = 0
+        self.checkpoint = self.game.checkpoint
+        self.hit = False
 
     def move(self, control):
         if control == 'keys':
@@ -145,14 +146,8 @@ class Player(pygame.sprite.Sprite):
 
             self.moves += str(self.direction)
 
-    def read_moves(self, line):
-        direction = 0
-        # Read moves from moves file
-        with open(moves_path, 'r') as file:
-            data = file.readlines()
-        if self.game.tick < len(data[line]):
-            direction = int(list(data[line])[self.game.tick])
-
+    def read_move(self, direction):
+        # Move in inputted direction
         self.vx = 0
         self.vy = 0
         if direction == 4 or direction == 5 or direction == 6:
@@ -164,31 +159,52 @@ class Player(pygame.sprite.Sprite):
         if direction == 2 or direction == 3 or direction == 4:
             self.vx = self.speed
 
+
     def update(self):
         # Check if direction change limit is reached
         if self.changes > self.change_limit:
             self.end_moves()
-        if self.control != 'read':
+
+        # Rewind moves
+        if self.game.rewind:
+            if self.game.tick < self.game.best_moves_num:
+                self.read_move(int(self.game.best_moves[self.game.tick]))
+                self.game.tick += 1
+            else:
+                self.game.rewind = False
+                self.game.tick = 0
+
+                self.game.checkx = self.rect.x
+                self.game.checky = self.rect.y
+                self.game.new_player('random', self.game.player_count)
+
+                self.die()
+        else:
             self.move(self.control)
+
         self.rect.x += self.vx
         self.wall_collision('x')
         self.rect.y += self.vy
         self.wall_collision('y')
         self.enemy_collision()
 
-        # Check for checkpoints23
-        coordinates = self.game.checkpoints_list[self.checkpoint]
+        if not self.game.rewind:
+            # Check for checkpoints
+            coordinates = self.game.checkpoints_list[self.checkpoint]
 
-        if math.hypot(float(coordinates[0] + tile_size / 2) - float(self.rect.x + self.size / 2),
-                      float(coordinates[1] + tile_size / 2) - float(self.rect.y + self.size / 2)) <= tile_size / 2:
-            if len(self.game.checkpoints_list[self.checkpoint + 1]) == 0:
-                # Remove from sprite lists
-                self.game.all_sprites.remove(self)
-                self.game.players.remove(self)
-                # Remove from player list and clears index
-            else:
-                self.checkpoint += 1
-        # print(self.bot.checkpoint_score(self))
+            if math.hypot(float(coordinates[0] + tile_size / 2) - float(self.rect.x + self.size / 2),
+                          float(coordinates[1] + tile_size / 2) - float(self.rect.y + self.size / 2)) <= 1.5*tile_size:
+                if len(self.game.checkpoints_list[self.checkpoint + 1]) == 0:
+                    # Remove from sprite lists
+                    self.game.all_sprites.remove(self)
+                    self.game.players.remove(self)
+                    # Remove from player list and clears index
+                else:
+                    self.checkpoint += 1
+                    if self.checkpoint > self.game.checkpoint:
+                        self.game.checkpoint = self.checkpoint
+
+            # print(checkpoint_score(self.game, self))
 
     def wall_collision(self, direction):
         """
@@ -197,7 +213,7 @@ class Player(pygame.sprite.Sprite):
         Parameters
         ----------
         direction : char
-            The direction te player is hitting the wall in, x or y
+            The direction the player is hitting the wall in, x or y
 
         Return
         ------
@@ -224,7 +240,9 @@ class Player(pygame.sprite.Sprite):
     def enemy_collision(self):
         enemy_hit = pygame.sprite.spritecollide(self, self.game.enemies, False)
         if enemy_hit:
+            self.hit = True
             self.end_moves()
+
 
     def respawn(self):
         self.x = self.game.startx * tile_size + 6
@@ -232,13 +250,17 @@ class Player(pygame.sprite.Sprite):
         self.rect.x = self.game.startx * tile_size + 6
         self.rect.y = self.game.starty * tile_size + 6
 
-    def end_moves(self):
+    def die(self):
         # Remove from sprite lists
         self.game.all_sprites.remove(self)
         self.game.players.remove(self)
         # Remove from player list and clears index
-        self.game.player_list.pop(self.game.player_list.index(self))
-        # Writes moves pre death into moves file to be sorted
+        # TODO: fix
+        if self.game.player_list:
+            self.game.player_list.pop(self.game.player_list.index(self))
+
+    def end_moves(self):
+        self.die()
+        # Writes moves pre death into moves file to be scored and sorted
         with open(moves_path, 'a') as file:
             file.write("Score: " + str(checkpoint_score(self.game, self)) + " Moves: " + self.moves + "\n")
-

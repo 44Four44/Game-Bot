@@ -127,3 +127,9 @@ class EnemyLinear(pygame.sprite.Sprite):
         self.move()
         self.rect.x = self.x - self.size/2
         self.rect.y = self.y - self.size/2
+
+    def reset(self):
+        self.x = self.criticals[0][0]
+        self.y = self.criticals[0][1]
+        self.rect.x = self.x - self.size/2
+        self.rect.y = self.y - self.size/2

@@ -19,6 +19,7 @@ moves_path = '/Users/EthanWang/Game_Bot/moves.txt'
 
 # Game settings
 FPS = 60
+zoom = 10
 Title = "mmmmmmmmmm"
 
 # Colors
@@ -31,4 +32,5 @@ maroon = (127, 0, 0)
 palegreen = (158, 242, 155)
 blue = (0, 0, 255)
 midnightblue = (0, 0, 68)
+lime = (53, 247, 0)
 
